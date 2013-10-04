@@ -1,7 +1,7 @@
 package com.tzwm.deadalarm;
 
-import android.os.Bundle;
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class CountDownActivity extends Activity {
@@ -9,7 +9,8 @@ public class CountDownActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_countdown);
+        setContentView(new CountDownSurfaceView(this));
+
     }
 
 
@@ -19,5 +20,5 @@ public class CountDownActivity extends Activity {
         getMenuInflater().inflate(R.menu.count_down, menu);
         return true;
     }
-    
+
 }

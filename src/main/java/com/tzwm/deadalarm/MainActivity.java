@@ -19,15 +19,15 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button btn = (Button)findViewById(R.id.button);
+        Button btn = (Button) findViewById(R.id.button);
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent("android.tzwm.hello");
                 PendingIntent pi = PendingIntent.getBroadcast(MainActivity.this,
-                                                              1, intent,
-                                                              PendingIntent.FLAG_ONE_SHOT);
-                AlarmManager arm = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+                        1, intent,
+                        PendingIntent.FLAG_ONE_SHOT);
+                AlarmManager arm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
                 Calendar cal = Calendar.getInstance();
                 cal.add(Calendar.MINUTE, 1);
                 arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
