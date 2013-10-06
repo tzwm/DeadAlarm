@@ -16,6 +16,7 @@ import java.text.DateFormat;
 public class CountDownTextView extends TextView implements Runnable{
     private int mBase;
     private Handler handler;
+    private CountDownTimer mCountDownTimer;
 
     public CountDownTextView(Context context) {
         super(context);
@@ -35,20 +36,8 @@ public class CountDownTextView extends TextView implements Runnable{
     public void setBase(int now) {
         mBase = now;
         setText(DateUtils.formatElapsedTime(mBase));
-    }
 
-    private void init() {
-        mBase = 0;
-        setText(DateUtils.formatElapsedTime(mBase));
-        handler = new Handler();
-        setTextColor(Color.WHITE);
-        setTextSize(50);
-    }
-
-    @Override
-    public void run() {
-        new CountDownTimer(mBase*1000, 1000) {
-
+        mCountDownTimer = new CountDownTimer(mBase*1000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 CountDownTextView.this.setText(DateUtils.formatElapsedTime(millisUntilFinished/1000));
@@ -58,7 +47,36 @@ public class CountDownTextView extends TextView implements Runnable{
             public void onFinish() {
                 CountDownTextView.this.setText(DateUtils.formatElapsedTime(mBase));
             }
-        }.start();
+        };
+    }
+
+    public void stopTimer() {
+        mCountDownTimer.cancel();
+    }
+
+    private void init() {
+        mBase = 0;
+        setText(DateUtils.formatElapsedTime(mBase));
+        handler = new Handler();
+        setTextColor(Color.WHITE);
+        setTextSize(50);
+
+        mCountDownTimer = new CountDownTimer(mBase*1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                CountDownTextView.this.setText(DateUtils.formatElapsedTime(millisUntilFinished/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                CountDownTextView.this.setText(DateUtils.formatElapsedTime(mBase));
+            }
+        };
+    }
+
+    @Override
+    public void run() {
+        mCountDownTimer.start();
     }
 
 }

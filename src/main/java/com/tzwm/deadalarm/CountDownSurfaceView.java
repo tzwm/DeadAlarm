@@ -73,6 +73,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
+                    countDownActivity.mCountDownTextView.stopTimer();
                     countDownActivity.mCountDownTextView.setBase(secondRemain);
                     break;
                 }
@@ -89,6 +90,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
                 arcAngle = 360 - pointToAngle(x, y);
                 secondRemain = arcAngle*10;
+                countDownActivity.mCountDownTextView.stopTimer();
                 countDownActivity.mCountDownTextView.setBase(secondRemain);
 
                 break;
@@ -99,7 +101,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                     break;
                 }
 
-                if(event.getEventTime() - event.getDownTime() <= 400)
+                if(event.getEventTime() - event.getDownTime() <= 200)
                     fringeTouchUp();
 
                 break;
@@ -156,7 +158,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         ccColor = Color.TRANSPARENT;
         currentColor = 0;
         arcColor = Color.WHITE;
-        arcAngle = 200;
+        arcAngle = 0;
         currentArcAngle = -1;
 
         isRecording = false;
