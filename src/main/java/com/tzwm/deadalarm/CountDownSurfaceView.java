@@ -144,8 +144,8 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     private void centerTouchUp() {
         mediaController.stopRecording();
         drawTransCircle();
-        sendAlarm();
         countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
+        sendAlarm();
     }
 
     private void init(Context context) {

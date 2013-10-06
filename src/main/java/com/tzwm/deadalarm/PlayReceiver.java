@@ -17,7 +17,7 @@ public class PlayReceiver extends BroadcastReceiver {
         MediaController mediaController = new MediaController();
         mediaController.startPlaying();
 
-        Toast toast = Toast.makeText(context, "Time's UP!", Toast.LENGTH_LONG);
+        Toast toast = Toast.makeText(context, "Time's Up!", Toast.LENGTH_LONG);
         toast.show();
     }
 }

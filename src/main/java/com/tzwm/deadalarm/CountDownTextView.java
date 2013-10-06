@@ -2,6 +2,7 @@ package com.tzwm.deadalarm;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.AttributeSet;
@@ -46,10 +47,18 @@ public class CountDownTextView extends TextView implements Runnable{
 
     @Override
     public void run() {
-        if(mBase == 0)
-            return;
-        mBase--;
-        setText(DateUtils.formatElapsedTime(mBase));
-        handler.postDelayed(this, 1000);
+        new CountDownTimer(mBase*1000, 1000) {
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                CountDownTextView.this.setText(DateUtils.formatElapsedTime(millisUntilFinished/1000));
+            }
+
+            @Override
+            public void onFinish() {
+                CountDownTextView.this.setText(DateUtils.formatElapsedTime(mBase));
+            }
+        }.start();
     }
+
 }
