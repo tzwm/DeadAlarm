@@ -27,6 +27,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     private MediaController mediaController;
     private Thread drawThread;
     private int xCanvas, yCanvas, rCenterCircle, rFringeCircle;
+    private float xCurrent, yCurrent;
     private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle;
     private boolean isMove, isRecording;
     private int secondRemain;
@@ -70,6 +71,9 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         float x = event.getX();
         float y = event.getY();
 
+        xCurrent = x;
+        yCurrent = y;
+
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
@@ -101,7 +105,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                     break;
                 }
 
-                if(event.getEventTime() - event.getDownTime() <= 200)
+                if(event.getEventTime() - event.getDownTime() <= 100)
                     fringeTouchUp();
 
                 break;
@@ -202,10 +206,14 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 mPaint.setAntiAlias(true);
                 mPaint.setStyle(Paint.Style.STROKE);
                 mPaint.setColor(arcColor);
+                mPaint.setStrokeWidth(2);
                 canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
                 canvas.drawArc(new RectF(xCanvas / 2 - rFringeCircle, yCanvas / 2 - rFringeCircle,
                         xCanvas / 2 + rFringeCircle, yCanvas / 2 + rFringeCircle),
                         0+270, arcAngle, false, mPaint);
+                float tmp = (float)Math.sqrt(xCurrent*xCurrent + yCurrent*yCurrent);
+                tmp = rFringeCircle / tmp;
+//                canvas.drawCircle(tmp*xCurrent, tmp*yCurrent, 10, mPaint);
                 countDownholder.unlockCanvasAndPost(canvas);
 
                 currentArcAngle = arcAngle;
@@ -234,13 +242,13 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 return 90;
 
         if (x > 0 && y > 0)
-            return (int) (180 * (1.5 + Math.atan((double)y/x)/Math.PI));
+            return (int) (180 * (1.5 + Math.atan(y/x)/Math.PI));
         if (x < 0 && y > 0)
-            return (int) (180 * (0.5 + Math.atan((double)y/x)/Math.PI));
+            return (int) (180 * (0.5 + Math.atan(y/x)/Math.PI));
         if (x < 0 && y < 0)
-            return (int) (180 * (0.5 + Math.atan((double)y/x)/Math.PI));
+            return (int) (180 * (0.5 + Math.atan(y/x)/Math.PI));
         if (x > 0 && y < 0)
-            return (int) (180 * (1.5 + Math.atan((double)y/x)/Math.PI));
+            return (int) (180 * (1.5 + Math.atan(y/x)/Math.PI));
 
         return 0;
     }

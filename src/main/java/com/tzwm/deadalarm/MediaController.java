@@ -20,7 +20,7 @@ public class MediaController {
         mPlayer =null;
 
         mFileName = Environment.getExternalStorageDirectory().getAbsolutePath();
-        mFileName += "/notification.3gp";
+        mFileName += "/DeadTimer_notification.3gp";
     }
 
     public void startRecording() {
@@ -43,8 +43,13 @@ public class MediaController {
         if (mRecorder == null)
             return;
 
-        mRecorder.stop();
-        mRecorder.release();
+        try {
+            mRecorder.stop();
+            mRecorder.release();
+        } catch (Exception e) {
+            Log.e("DeadAlarm Recording", "stop() failed");
+        }
+
         mRecorder = null;
     }
 
