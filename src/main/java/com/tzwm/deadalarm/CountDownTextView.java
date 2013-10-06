@@ -3,14 +3,17 @@ package com.tzwm.deadalarm;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.AttributeSet;
 import android.widget.TextView;
+
+import java.text.DateFormat;
 
 /**
  * Created by tzwm on 10/6/13.
  */
 public class CountDownTextView extends TextView implements Runnable{
-    private long mBase;
+    private int mBase;
     private Handler handler;
 
     public CountDownTextView(Context context) {
@@ -28,13 +31,13 @@ public class CountDownTextView extends TextView implements Runnable{
         init();
     }
 
-    public void setBase(long now) {
+    public void setBase(int now) {
         mBase = now;
     }
 
     private void init() {
         mBase = 0;
-        setText("" + mBase);
+        setText(DateUtils.formatElapsedTime(mBase));
         handler = new Handler();
         setTextColor(Color.WHITE);
         setTextSize(50);
@@ -43,7 +46,9 @@ public class CountDownTextView extends TextView implements Runnable{
     @Override
     public void run() {
         mBase--;
-        setText("" + mBase);
+        setText(DateUtils.formatElapsedTime(mBase));
+        if(mBase == 0)
+            return;
         handler.postDelayed(this, 1000);
     }
 }

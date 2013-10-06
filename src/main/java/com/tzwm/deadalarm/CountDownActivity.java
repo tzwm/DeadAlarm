@@ -17,7 +17,7 @@ public class CountDownActivity extends Activity {
         setContentView(R.layout.activity_countdown);
 
         mCountDownTextView = (CountDownTextView)findViewById(R.id.view2);
-        mCountDownTextView.setBase(50);
+        mCountDownTextView.setBase(3600);
         new Thread(mCountDownTextView).start();
     }
 
