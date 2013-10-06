@@ -28,7 +28,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     private CountDownActivity countDownActivity;
     private SurfaceHolder countDownholder;
     private int xCanvas, yCanvas;
-    private int ccColor;
+    private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle;
     private int rCenterCircle;
     private boolean isMove, isRecording;
     private int secondRemain;
@@ -60,7 +60,6 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-
     }
 
     @Override
@@ -72,7 +71,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         float x = event.getX();
         float y = event.getY();
 
-        switch (event.getAction()) {
+        switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 isMove = false;
 
@@ -98,36 +97,18 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_CANCEL:
-                if(!isMove)
-                    centerTouchUp();
-                isMove = true;
-
                 break;
         }
-
 
         return true;
     }
 
     private void drawRedCircle() {
-        Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas/2-rCenterCircle, yCanvas/2-rCenterCircle,
-                                                            xCanvas/2+rCenterCircle, yCanvas/2+rCenterCircle));
-
-        Paint mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.RED);
-        canvas.drawCircle(xCanvas/2, yCanvas/2, rCenterCircle, mPaint);
-
-        countDownholder.unlockCanvasAndPost(canvas);
+        ccColor = Color.RED;
     }
 
     private void drawTransCircle() {
-        Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas/2-rCenterCircle-1, yCanvas/2-rCenterCircle-1,
-                xCanvas/2+rCenterCircle+1, yCanvas/2+rCenterCircle+1));
-
-        canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-
-        countDownholder.unlockCanvasAndPost(canvas);
+        ccColor = Color.TRANSPARENT;
     }
 
     private void sendAlarm() {
@@ -157,7 +138,11 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         setZOrderOnTop(true);
         setFocusableInTouchMode(true);
 
-        ccColor = Color.WHITE;
+        ccColor = Color.TRANSPARENT;
+        currentColor = -1;
+        arcColor = Color.GREEN;
+        arcAngle = 300;
+        currentArcAngle = -1;
 
         secondRemain = 10;
 
@@ -166,15 +151,33 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     @Override
     public void run() {
-        Canvas canvas = countDownholder.lockCanvas();
+        while(true){
+            if(ccColor != currentColor){
+                Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas/2-rCenterCircle-1,
+                                                                    yCanvas/2-rCenterCircle-1,
+                                                                    xCanvas/2+rCenterCircle+1,
+                                                                    yCanvas/2+rCenterCircle+1));
+                Paint mPaint = new Paint();
+                mPaint.setAntiAlias(true);
+                mPaint.setColor(ccColor);
+                canvas.drawCircle(xCanvas/2, yCanvas/2, rCenterCircle, mPaint);
+                countDownholder.unlockCanvasAndPost(canvas);
 
-        Paint mPaint = new Paint();
-        mPaint.setAntiAlias(true);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setColor(ccColor);
-        canvas.drawCircle(canvas.getWidth() / 2, canvas.getHeight() / 2, rCenterCircle, mPaint);
-        canvas.drawArc(new RectF(xCanvas / 2 - rCenterCircle, yCanvas / 2 - rCenterCircle, xCanvas / 2 + rCenterCircle, yCanvas / 2 + rCenterCircle), 0, 360, true, mPaint);
+                currentColor = ccColor;
+            }
 
-        countDownholder.unlockCanvasAndPost(canvas);
+            if(arcAngle != currentArcAngle) {
+                Canvas canvas = countDownholder.lockCanvas();
+                Paint mPaint = new Paint();
+                mPaint.setAntiAlias(true);
+                mPaint.setStyle(Paint.Style.STROKE);
+                mPaint.setColor(arcColor);
+                canvas.drawArc(new RectF(xCanvas / 2 - rCenterCircle, yCanvas / 2 - rCenterCircle, xCanvas / 2 + rCenterCircle, yCanvas / 2 + rCenterCircle), 0, arcAngle, false, mPaint);
+                countDownholder.unlockCanvasAndPost(canvas);
+
+                currentArcAngle = arcAngle;
+            }
+
+        }
     }
 }
