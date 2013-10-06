@@ -1,7 +1,6 @@
 package com.tzwm.deadalarm;
 
 import android.app.AlarmManager;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -12,12 +11,10 @@ import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.RectF;
-import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.widget.Chronometer;
 
 import java.util.Calendar;
 
@@ -75,7 +72,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
-                if(!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)){
+                if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
                     countDownActivity.mCountDownTextView.setBase(secondRemain);
                     break;
                 }
@@ -87,13 +84,22 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                if ((Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle))
+                    break;
+
+                arcAngle = 360 - pointToAngle(x, y);
+                secondRemain = arcAngle*10;
+                countDownActivity.mCountDownTextView.setBase(secondRemain);
 
                 break;
 
             case MotionEvent.ACTION_UP:
-                if(isRecording)
+                if(isRecording) {
                     centerTouchUp();
-                else
+                    break;
+                }
+
+                if(event.getEventTime() - event.getDownTime() <= 400)
                     fringeTouchUp();
 
                 break;
@@ -106,13 +112,12 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
 
-
     private void sendAlarm() {
         Intent intent = new Intent("android.tzwm.hello");
         PendingIntent pi = PendingIntent.getBroadcast(countDownActivity,
-                                                        1, intent,
-                                                        PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager arm = (AlarmManager)countDownActivity.getSystemService(Context.ALARM_SERVICE);
+                1, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager arm = (AlarmManager) countDownActivity.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, secondRemain);
         arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
@@ -139,7 +144,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     }
 
     private void init(Context context) {
-        countDownActivity = (CountDownActivity)context;
+        countDownActivity = (CountDownActivity) context;
         mediaController = new MediaController();
 
         countDownholder = this.getHolder();
@@ -149,9 +154,9 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         setFocusableInTouchMode(true);
 
         ccColor = Color.TRANSPARENT;
-        currentColor = -1;
+        currentColor = 0;
         arcColor = Color.WHITE;
-        arcAngle = 300;
+        arcAngle = 200;
         currentArcAngle = -1;
 
         isRecording = false;
@@ -162,46 +167,74 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     @Override
     public void run() {
-        while(true){
-            if(ccColor != currentColor){
-                Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas/2-rCenterCircle-1,
-                                                                    yCanvas/2-rCenterCircle-1,
-                                                                    xCanvas/2+rCenterCircle+1,
-                                                                    yCanvas/2+rCenterCircle+1));
+        while (true) {
+            if (ccColor != currentColor) {
+                Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas / 2 - rCenterCircle - 1,
+                        yCanvas / 2 - rCenterCircle - 1,
+                        xCanvas / 2 + rCenterCircle + 1,
+                        yCanvas / 2 + rCenterCircle + 1));
                 Paint mPaint = new Paint();
                 mPaint.setAntiAlias(true);
-                if(ccColor == Color.TRANSPARENT)
+                if (ccColor == Color.TRANSPARENT)
                     canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                else{
+                else {
                     mPaint.setColor(ccColor);
-                    canvas.drawCircle(xCanvas/2, yCanvas/2, rCenterCircle, mPaint);
+                    canvas.drawCircle(xCanvas / 2, yCanvas / 2, rCenterCircle, mPaint);
                 }
                 countDownholder.unlockCanvasAndPost(canvas);
 
                 currentColor = ccColor;
             }
 
-            if(arcAngle != currentArcAngle) {
-                Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas/2-rFringeCircle-1,
-                                                                    yCanvas/2-rFringeCircle-1,
-                                                                    xCanvas/2+rFringeCircle+1,
-                                                                    yCanvas/2+rFringeCircle+1));
+            if (arcAngle != currentArcAngle) {
+                Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas / 2 - rFringeCircle - 1,
+                        yCanvas / 2 - rFringeCircle - 1,
+                        xCanvas / 2 + rFringeCircle + 1,
+                        yCanvas / 2 + rFringeCircle + 1));
                 Paint mPaint = new Paint();
                 mPaint.setAntiAlias(true);
                 mPaint.setStyle(Paint.Style.STROKE);
-                if(arcColor == Color.TRANSPARENT)
-                    canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
-                else {
-                    mPaint.setColor(arcColor);
-                    canvas.drawArc(new RectF(xCanvas/2-rFringeCircle, yCanvas/2-rFringeCircle,
-                                             xCanvas/2+rFringeCircle, yCanvas/2+rFringeCircle),
-                                   0, arcAngle, false, mPaint);
-                }
+                mPaint.setColor(arcColor);
+                canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+                canvas.drawArc(new RectF(xCanvas / 2 - rFringeCircle, yCanvas / 2 - rFringeCircle,
+                        xCanvas / 2 + rFringeCircle, yCanvas / 2 + rFringeCircle),
+                        0+270, arcAngle, false, mPaint);
                 countDownholder.unlockCanvasAndPost(canvas);
 
                 currentArcAngle = arcAngle;
             }
 
         }
+    }
+
+    private int pointToAngle(float x, float y) {
+        x = x - xCanvas / 2;
+        y = y - yCanvas / 2;
+        y = -y;
+
+        if (x == 0 && y == 0)
+            return 0;
+
+        if (y == 0)
+            if (x > 0)
+                return 0;
+            else
+                return 180;
+        if (x == 0)
+            if (y > 0)
+                return 270;
+            else
+                return 90;
+
+        if (x > 0 && y > 0)
+            return (int) (180 * (1.5 + Math.atan((double)y/x)/Math.PI));
+        if (x < 0 && y > 0)
+            return (int) (180 * (0.5 + Math.atan((double)y/x)/Math.PI));
+        if (x < 0 && y < 0)
+            return (int) (180 * (0.5 + Math.atan((double)y/x)/Math.PI));
+        if (x > 0 && y < 0)
+            return (int) (180 * (1.5 + Math.atan((double)y/x)/Math.PI));
+
+        return 0;
     }
 }
