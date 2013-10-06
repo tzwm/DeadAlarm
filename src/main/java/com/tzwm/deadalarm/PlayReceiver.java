@@ -14,7 +14,10 @@ public class PlayReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast toast = Toast.makeText(context, "Ok", Toast.LENGTH_SHORT);
+        MediaController mediaController = new MediaController();
+        mediaController.startPlaying();
+
+        Toast toast = Toast.makeText(context, "Time's UP!", Toast.LENGTH_LONG);
         toast.show();
     }
 }

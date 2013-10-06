@@ -1,7 +1,10 @@
 package com.tzwm.deadalarm;
 
+import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,6 +18,8 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.Chronometer;
+
+import java.util.Calendar;
 
 /**
  * Created by tzwm on 10/5/13.
@@ -50,8 +55,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         yCanvas = getHeight();
         rCenterCircle = getWidth() / 5;
 
-        Thread thread = new Thread(this);
-        thread.start();
+        new Thread(this).start();
     }
 
     @Override
@@ -73,29 +77,31 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 isMove = false;
 
                 if(!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)){
+                    countDownActivity.mCountDownTextView.setBase(secondRemain);
+                    isMove = true;
                     break;
                 }
 
-                drawRedCircle();
                 mediaController.startRecording();
+                drawRedCircle();
+
+                break;
 
             case MotionEvent.ACTION_MOVE:
-                isMove = true;
-                if(!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle))
-                    drawTransCircle();
 
                 break;
 
             case MotionEvent.ACTION_UP:
-                drawTransCircle();
-                mediaController.stopRecording();
-                mediaController.startPlaying();
+                if(!isMove)
+                    centerTouchUp();
 
                 break;
+
             case MotionEvent.ACTION_CANCEL:
+                if(!isMove)
+                    centerTouchUp();
                 isMove = true;
 
-                drawTransCircle();
                 break;
         }
 
@@ -124,6 +130,24 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         countDownholder.unlockCanvasAndPost(canvas);
     }
 
+    private void sendAlarm() {
+        Intent intent = new Intent("android.tzwm.hello");
+        PendingIntent pi = PendingIntent.getBroadcast(countDownActivity,
+                1, intent,
+                PendingIntent.FLAG_ONE_SHOT);
+        AlarmManager arm = (AlarmManager)countDownActivity.getSystemService(Context.ALARM_SERVICE);
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.SECOND, secondRemain);
+        arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+    }
+
+    private void centerTouchUp() {
+        mediaController.stopRecording();
+        drawTransCircle();
+        sendAlarm();
+        countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
+    }
+
     private void init(Context context) {
         countDownActivity = (CountDownActivity)context;
 
@@ -135,9 +159,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         ccColor = Color.WHITE;
 
-        secondRemain = 50;
-
-//        chronometer.setBase(secondRemain);
+        secondRemain = 10;
 
         mediaController = new MediaController();
     }

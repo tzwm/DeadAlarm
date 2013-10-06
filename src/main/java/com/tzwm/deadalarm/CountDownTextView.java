@@ -33,6 +33,7 @@ public class CountDownTextView extends TextView implements Runnable{
 
     public void setBase(int now) {
         mBase = now;
+        setText(DateUtils.formatElapsedTime(mBase));
     }
 
     private void init() {
@@ -45,10 +46,10 @@ public class CountDownTextView extends TextView implements Runnable{
 
     @Override
     public void run() {
-        mBase--;
-        setText(DateUtils.formatElapsedTime(mBase));
         if(mBase == 0)
             return;
+        mBase--;
+        setText(DateUtils.formatElapsedTime(mBase));
         handler.postDelayed(this, 1000);
     }
 }

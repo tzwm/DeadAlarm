@@ -50,6 +50,14 @@ public class MediaController {
 
     public void startPlaying() {
         mPlayer = new MediaPlayer();
+
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+
         try {
             mPlayer.setDataSource(mFileName);
             mPlayer.prepare();
@@ -57,6 +65,7 @@ public class MediaController {
         } catch (IOException e) {
             Log.e("DeadAlarm Playing", "prepare() failed");
         }
+
     }
 
 }
