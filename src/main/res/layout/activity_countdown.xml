@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <Chronometer
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/chronometer"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:textSize="50dp"
-        android:textColor="#FFFFFF" />
-
     <view
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,5 +13,13 @@
         android:id="@+id/view"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <view
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        class="com.tzwm.deadalarm.CountDownTextView"
+        android:id="@+id/view2"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"/>
 
 </RelativeLayout>
