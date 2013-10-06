@@ -51,7 +51,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         xCanvas = getWidth();
         yCanvas = getHeight();
         rCenterCircle = getWidth() / 5;
-        rFringeCircle = getWidth() / 3;
+        rFringeCircle = (int)(getWidth() / 2.5);
 
         drawThread = new Thread(this);
         drawThread.start();
@@ -107,6 +107,11 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_CANCEL:
+                if(isRecording) {
+                    centerTouchUp();
+                    break;
+                }
+
                 break;
         }
 
