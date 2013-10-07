@@ -3,7 +3,7 @@ package com.tzwm.deadalarm;
 import android.app.Activity;
 import android.os.Bundle;
 
-public class CountDownActivity extends Activity {
+public class TimeSettingActivity extends Activity {
     public CountDownTextView mCountDownTextView;
 
     @Override

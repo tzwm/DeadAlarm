@@ -10,7 +10,10 @@ import android.widget.Toast;
 /**
  * Created by tzwm on 10/4/13.
  */
-public class PlayReceiver extends BroadcastReceiver {
+public class AlarmReceiver extends BroadcastReceiver {
+    static final int WAKEUP_NORMA = 0;
+
+    static int wakeupWay = 0;
 
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -21,8 +21,8 @@ import java.util.Calendar;
 /**
  * Created by tzwm on 10/5/13.
  */
-public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
-    private CountDownActivity countDownActivity;
+public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    private TimeSettingActivity timeSettingActivity;
     private SurfaceHolder countDownholder;
     private MediaController mediaController;
     private Thread drawThread;
@@ -32,17 +32,17 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     private boolean isMove, isRecording;
     private int secondRemain;
 
-    public CountDownSurfaceView(Context context) {
+    public TimeSettingSurfaceView(Context context) {
         super(context);
         this.init(context);
     }
 
-    public CountDownSurfaceView(Context context, AttributeSet attrs) {
+    public TimeSettingSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.init(context);
     }
 
-    public CountDownSurfaceView(Context context, AttributeSet attrs, int defStyle) {
+    public TimeSettingSurfaceView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.init(context);
     }
@@ -77,8 +77,8 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
-                    countDownActivity.mCountDownTextView.stopTimer();
-                    countDownActivity.mCountDownTextView.setBase(secondRemain);
+                    timeSettingActivity.mCountDownTextView.stopTimer();
+                    timeSettingActivity.mCountDownTextView.setBase(secondRemain);
                     break;
                 }
 
@@ -108,16 +108,16 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                     }else{
                         secondRemain = 3600;
                     }
-                    countDownActivity.mCountDownTextView.stopTimer();
-                    countDownActivity.mCountDownTextView.setBase(secondRemain);
+                    timeSettingActivity.mCountDownTextView.stopTimer();
+                    timeSettingActivity.mCountDownTextView.setBase(secondRemain);
                     lastAngle = -1;
                     break;
                 }
                 lastAngle = arcAngle;
 
                 secondRemain = arcAngle * 10;
-                countDownActivity.mCountDownTextView.stopTimer();
-                countDownActivity.mCountDownTextView.setBase(secondRemain);
+                timeSettingActivity.mCountDownTextView.stopTimer();
+                timeSettingActivity.mCountDownTextView.setBase(secondRemain);
 
                 break;
 
@@ -128,7 +128,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                     break;
                 }
 
-                if (event.getEventTime() - event.getDownTime() <= 100)
+                if (event.getEventTime() - event.getDownTime() <= 50)
                     fringeTouchUp();
 
                 break;
@@ -148,10 +148,10 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
     private void sendAlarm() {
         Intent intent = new Intent("android.tzwm.hello");
-        PendingIntent pi = PendingIntent.getBroadcast(countDownActivity,
+        PendingIntent pi = PendingIntent.getBroadcast(timeSettingActivity,
                 1, intent,
                 PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager arm = (AlarmManager) countDownActivity.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager arm = (AlarmManager) timeSettingActivity.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.SECOND, secondRemain);
         arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
@@ -161,7 +161,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         mediaController.stopRecording();
         isRecording = false;
         ccColor = Color.TRANSPARENT;
-        countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
+        timeSettingActivity.runOnUiThread(timeSettingActivity.mCountDownTextView);
         sendAlarm();
     }
 
@@ -173,12 +173,12 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
             e.printStackTrace();
         }
         ccColor = Color.TRANSPARENT;
-        countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
+        timeSettingActivity.runOnUiThread(timeSettingActivity.mCountDownTextView);
         sendAlarm();
     }
 
     private void init(Context context) {
-        countDownActivity = (CountDownActivity) context;
+        timeSettingActivity = (TimeSettingActivity) context;
         mediaController = new MediaController();
 
         countDownholder = this.getHolder();
