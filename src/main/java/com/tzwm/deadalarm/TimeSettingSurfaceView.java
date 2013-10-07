@@ -1,9 +1,6 @@
 package com.tzwm.deadalarm;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,34 +12,33 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.util.Calendar;
+import android.view.View;
 
 /**
  * Created by tzwm on 10/5/13.
  */
-public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
-    private CountDownActivity countDownActivity;
+public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder.Callback, Runnable {
+    private TimeSettingActivity timeSettingActivity;
     private SurfaceHolder countDownholder;
     private MediaController mediaController;
     private Thread drawThread;
     private int xCanvas, yCanvas, rCenterCircle, rFringeCircle;
     private float xCurrent, yCurrent;
     private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle, lastAngle;
-    private boolean isMove, isRecording;
-    private int secondRemain;
+    private boolean isMove, isRecording, isHour;
+    private int hourOfDay, minute;
 
-    public CountDownSurfaceView(Context context) {
+    public TimeSettingSurfaceView(Context context) {
         super(context);
         this.init(context);
     }
 
-    public CountDownSurfaceView(Context context, AttributeSet attrs) {
+    public TimeSettingSurfaceView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.init(context);
     }
 
-    public CountDownSurfaceView(Context context, AttributeSet attrs, int defStyle) {
+    public TimeSettingSurfaceView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         this.init(context);
     }
@@ -77,14 +73,13 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
-                    countDownActivity.mCountDownTextView.stopTimer();
-                    countDownActivity.mCountDownTextView.setBase(secondRemain);
                     break;
                 }
 
                 mediaController.startRecording();
                 isRecording = true;
                 ccColor = Color.RED;
+                timeSettingActivity.mTimeTextView.setVisibility(View.INVISIBLE);
 
                 break;
 
@@ -104,20 +99,16 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 arcAngle = 360 - pointToAngle(x, y);
                 if((arcAngle>=1&&arcAngle<=3) || (arcAngle<=359&&arcAngle>=357)){
                     if(lastAngle > arcAngle){
-                        secondRemain = 0;
+                        updateTime(0);
                     }else{
-                        secondRemain = 3600;
+                        updateTime(360);
                     }
-                    countDownActivity.mCountDownTextView.stopTimer();
-                    countDownActivity.mCountDownTextView.setBase(secondRemain);
                     lastAngle = -1;
                     break;
                 }
                 lastAngle = arcAngle;
 
-                secondRemain = arcAngle * 10;
-                countDownActivity.mCountDownTextView.stopTimer();
-                countDownActivity.mCountDownTextView.setBase(secondRemain);
+                updateTime(arcAngle);
 
                 break;
 
@@ -145,40 +136,34 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         return true;
     }
 
-
-    private void sendAlarm() {
-        Intent intent = new Intent("android.tzwm.hello");
-        PendingIntent pi = PendingIntent.getBroadcast(countDownActivity,
-                1, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager arm = (AlarmManager) countDownActivity.getSystemService(Context.ALARM_SERVICE);
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, secondRemain);
-        arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
-    }
-
     private void centerTouchUp() {
         mediaController.stopRecording();
         isRecording = false;
         ccColor = Color.TRANSPARENT;
-        countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
-        sendAlarm();
+        timeSettingActivity.mTimeTextView.setVisibility(View.VISIBLE);
     }
 
     private void fringeTouchUp() {
-        ccColor = Color.GREEN;
+        arcColor = Color.GREEN;
         try {
             drawThread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ccColor = Color.TRANSPARENT;
-        countDownActivity.runOnUiThread(countDownActivity.mCountDownTextView);
-        sendAlarm();
+        arcColor = Color.WHITE;
+        isHour = !isHour;
+    }
+
+    private void updateTime(int angle) {
+        if(isHour)
+            hourOfDay = (int)((float)angle/15.65);
+        else
+            minute = (int)((float)angle/6.1);
+        timeSettingActivity.mTimeTextView.setTime(hourOfDay, minute);
     }
 
     private void init(Context context) {
-        countDownActivity = (CountDownActivity) context;
+        timeSettingActivity = (TimeSettingActivity) context;
         mediaController = new MediaController();
 
         countDownholder = this.getHolder();
@@ -198,7 +183,10 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
 
         isRecording = false;
         isMove = false;
+        isHour = true;
 
+        hourOfDay = 0;
+        minute = 0;
     }
 
     @Override
@@ -222,7 +210,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 currentColor = ccColor;
             }
 
-            if (arcAngle != currentArcAngle) {
+            if (arcAngle != currentArcAngle  || arcColor != Color.WHITE) {
                 Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas / 2 - rFringeCircle - 15,
                         yCanvas / 2 - rFringeCircle - 15,
                         xCanvas / 2 + rFringeCircle + 15,
