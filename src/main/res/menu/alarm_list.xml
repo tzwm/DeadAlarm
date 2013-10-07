@@ -5,7 +5,8 @@
         android:icon="@drawable/spanner"
         android:title="Setting"
         android:showAsAction="ifRoom"
-        android:actionProviderClass="android.widget.ActionProvider"/>
+        android:actionProviderClass="com.tzwm.deadalarm.WakeUpSettingActionProvider" />
+
     <item
         android:id="@+id/menu_plus"
         android:icon="@drawable/plus"
