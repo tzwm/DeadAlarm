@@ -1,9 +1,6 @@
 package com.tzwm.deadalarm;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -15,8 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.util.Calendar;
+import android.view.View;
 
 /**
  * Created by tzwm on 10/5/13.
@@ -29,8 +25,8 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
     private int xCanvas, yCanvas, rCenterCircle, rFringeCircle;
     private float xCurrent, yCurrent;
     private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle, lastAngle;
-    private boolean isMove, isRecording;
-    private int secondRemain;
+    private boolean isMove, isRecording, isHour;
+    private int hourOfDay, minute;
 
     public TimeSettingSurfaceView(Context context) {
         super(context);
@@ -77,14 +73,13 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
         switch (event.getActionMasked()) {
             case MotionEvent.ACTION_DOWN:
                 if (!(Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
-                    timeSettingActivity.mCountDownTextView.stopTimer();
-                    timeSettingActivity.mCountDownTextView.setBase(secondRemain);
                     break;
                 }
 
                 mediaController.startRecording();
                 isRecording = true;
                 ccColor = Color.RED;
+                timeSettingActivity.mTimeTextView.setVisibility(View.INVISIBLE);
 
                 break;
 
@@ -104,20 +99,16 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
                 arcAngle = 360 - pointToAngle(x, y);
                 if((arcAngle>=1&&arcAngle<=3) || (arcAngle<=359&&arcAngle>=357)){
                     if(lastAngle > arcAngle){
-                        secondRemain = 0;
+                        updateTime(0);
                     }else{
-                        secondRemain = 3600;
+                        updateTime(360);
                     }
-                    timeSettingActivity.mCountDownTextView.stopTimer();
-                    timeSettingActivity.mCountDownTextView.setBase(secondRemain);
                     lastAngle = -1;
                     break;
                 }
                 lastAngle = arcAngle;
 
-                secondRemain = arcAngle * 10;
-                timeSettingActivity.mCountDownTextView.stopTimer();
-                timeSettingActivity.mCountDownTextView.setBase(secondRemain);
+                updateTime(arcAngle);
 
                 break;
 
@@ -128,7 +119,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
                     break;
                 }
 
-                if (event.getEventTime() - event.getDownTime() <= 50)
+                if (event.getEventTime() - event.getDownTime() <= 200)
                     fringeTouchUp();
 
                 break;
@@ -145,36 +136,30 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
         return true;
     }
 
-
-    private void sendAlarm() {
-        Intent intent = new Intent("android.tzwm.hello");
-        PendingIntent pi = PendingIntent.getBroadcast(timeSettingActivity,
-                1, intent,
-                PendingIntent.FLAG_ONE_SHOT);
-        AlarmManager arm = (AlarmManager) timeSettingActivity.getSystemService(Context.ALARM_SERVICE);
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.SECOND, secondRemain);
-        arm.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
-    }
-
     private void centerTouchUp() {
         mediaController.stopRecording();
         isRecording = false;
         ccColor = Color.TRANSPARENT;
-        timeSettingActivity.runOnUiThread(timeSettingActivity.mCountDownTextView);
-        sendAlarm();
+        timeSettingActivity.mTimeTextView.setVisibility(View.VISIBLE);
     }
 
     private void fringeTouchUp() {
-        ccColor = Color.GREEN;
+        arcColor = Color.GREEN;
         try {
             drawThread.sleep(100);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        ccColor = Color.TRANSPARENT;
-        timeSettingActivity.runOnUiThread(timeSettingActivity.mCountDownTextView);
-        sendAlarm();
+        arcColor = Color.WHITE;
+        isHour = !isHour;
+    }
+
+    private void updateTime(int angle) {
+        if(isHour)
+            hourOfDay = (int)((float)angle/15.65);
+        else
+            minute = (int)((float)angle/6.1);
+        timeSettingActivity.mTimeTextView.setTime(hourOfDay, minute);
     }
 
     private void init(Context context) {
@@ -198,8 +183,10 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
 
         isRecording = false;
         isMove = false;
+        isHour = true;
 
-        secondRemain = 10;
+        hourOfDay = 0;
+        minute = 0;
     }
 
     @Override
@@ -223,7 +210,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
                 currentColor = ccColor;
             }
 
-            if (arcAngle != currentArcAngle) {
+            if (arcAngle != currentArcAngle  || arcColor != Color.WHITE) {
                 Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas / 2 - rFringeCircle - 15,
                         yCanvas / 2 - rFringeCircle - 15,
                         xCanvas / 2 + rFringeCircle + 15,
