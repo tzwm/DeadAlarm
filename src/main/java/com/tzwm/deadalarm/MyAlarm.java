@@ -37,6 +37,9 @@ public class MyAlarm {
         AlarmManager arm = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(System.currentTimeMillis());
+        if((hourOfDay < cal.get(Calendar.HOUR_OF_DAY))
+                || (hourOfDay == cal.get(Calendar.HOUR_OF_DAY) && minute < cal.get(Calendar.MINUTE)))
+            cal.set(Calendar.DAY_OF_MONTH, cal.get(Calendar.DAY_OF_MONTH) +1);
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minute);
         cal.set(Calendar.SECOND, 0);
