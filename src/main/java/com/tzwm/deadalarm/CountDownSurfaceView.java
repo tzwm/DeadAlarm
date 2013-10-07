@@ -28,7 +28,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
     private Thread drawThread;
     private int xCanvas, yCanvas, rCenterCircle, rFringeCircle;
     private float xCurrent, yCurrent;
-    private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle;
+    private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle, lastAngle;
     private boolean isMove, isRecording;
     private int secondRemain;
 
@@ -89,12 +89,32 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_MOVE:
+                if(lastAngle == -1)
+                    break;
+
                 if ((Math.abs(x - xCanvas / 2) < rCenterCircle && Math.abs(y - yCanvas / 2) < rCenterCircle)) {
                     break;
                 }
 
+                if(isRecording){
+                    centerTouchUp();
+                    break;
+                }
 
                 arcAngle = 360 - pointToAngle(x, y);
+                if((arcAngle>=1&&arcAngle<=3) || (arcAngle<=359&&arcAngle>=357)){
+                    if(lastAngle > arcAngle){
+                        secondRemain = 0;
+                    }else{
+                        secondRemain = 3600;
+                    }
+                    countDownActivity.mCountDownTextView.stopTimer();
+                    countDownActivity.mCountDownTextView.setBase(secondRemain);
+                    lastAngle = -1;
+                    break;
+                }
+                lastAngle = arcAngle;
+
                 secondRemain = arcAngle * 10;
                 countDownActivity.mCountDownTextView.stopTimer();
                 countDownActivity.mCountDownTextView.setBase(secondRemain);
@@ -102,6 +122,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                 break;
 
             case MotionEvent.ACTION_UP:
+                lastAngle = 0;
                 if (isRecording) {
                     centerTouchUp();
                     break;
@@ -170,6 +191,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         currentColor = 0;
         arcColor = Color.WHITE;
         arcAngle = 3;
+        lastAngle = 0;
         currentArcAngle = -1;
         xCurrent = 1000;
         yCurrent = 0;
