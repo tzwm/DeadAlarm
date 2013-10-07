@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.tzwm.deadalarm"
     android:versionCode="1"
-    android:versionName="1.0">
+    android:versionName="1.0" >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -16,30 +16,31 @@
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
-
-        <receiver android:name=".AlarmReceiver">
+        android:theme="@style/AppTheme" >
+        <receiver android:name="com.tzwm.deadalarm.AlarmReceiver" >
             <intent-filter>
                 <action android:name="android.tzwm.wakeup" />
             </intent-filter>
         </receiver>
 
         <activity
-            android:name="com.tzwm.deadalarm.AlarmListActivity"
+            android:name="com.tzwm.deadalarm.BeeActivity"
             android:label="@string/title_activity_alarmlist"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="com.tzwm.deadalarm.TimeSettingActivity"
             android:label="@string/title_activity_timesetting"
-            android:theme="@style/AppTheme"></activity>
-
+            android:theme="@style/AppTheme" />
+        <!--<activity-->
+            <!--android:name="com.tzwm.deadalarm.BeeActivity"-->
+            <!--android:label="@string/title_activity_bee" >-->
+        <!--</activity>-->
     </application>
 
 </manifest>
