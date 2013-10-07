@@ -128,7 +128,7 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
                     break;
                 }
 
-                if (event.getEventTime() - event.getDownTime() <= 100)
+                if (event.getEventTime() - event.getDownTime() <= 200)
                     fringeTouchUp();
 
                 break;
@@ -199,7 +199,6 @@ public class CountDownSurfaceView extends SurfaceView implements SurfaceHolder.C
         isRecording = false;
         isMove = false;
 
-        secondRemain = 10;
     }
 
     @Override
