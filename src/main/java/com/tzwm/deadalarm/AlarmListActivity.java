@@ -1,6 +1,7 @@
 package com.tzwm.deadalarm;
 
 import android.app.Activity;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;

@@ -25,7 +25,7 @@
         </receiver>
 
         <activity
-            android:name="com.tzwm.deadalarm.TimeSettingActivity"
+            android:name="com.tzwm.deadalarm.AlarmListActivity"
             android:label="@string/title_activity_count_down"
             android:theme="@style/myTheme">
             <intent-filter>
