@@ -24,7 +24,7 @@
         </receiver>
 
         <activity
-            android:name="com.tzwm.deadalarm.BeeActivity"
+            android:name="com.tzwm.deadalarm.AlarmListActivity"
             android:label="@string/title_activity_alarmlist"
             android:theme="@style/AppTheme" >
             <intent-filter>
@@ -37,10 +37,10 @@
             android:name="com.tzwm.deadalarm.TimeSettingActivity"
             android:label="@string/title_activity_timesetting"
             android:theme="@style/AppTheme" />
-        <!--<activity-->
-            <!--android:name="com.tzwm.deadalarm.BeeActivity"-->
-            <!--android:label="@string/title_activity_bee" >-->
-        <!--</activity>-->
+        <activity
+            android:name="com.tzwm.deadalarm.BeeActivity"
+            android:label="@string/title_activity_bee" >
+        </activity>
     </application>
 
 </manifest>

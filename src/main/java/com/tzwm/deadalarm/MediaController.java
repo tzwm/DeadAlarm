@@ -72,17 +72,15 @@ public class MediaController {
         try {
             File f = new File(mFileName);
             if(!f.exists()){
-                mPlayer.setDataSource(mContext,
-                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                mPlayer.release();
+                playNotification();
+                return;
             }else
                 mPlayer.setDataSource(mFileName);
         } catch (Exception e) {
-            try {
-                mPlayer.setDataSource(mContext,
-                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
+            mPlayer.release();
+            playNotification();
+            return;
         }
 
         try {
@@ -92,6 +90,25 @@ public class MediaController {
             Log.e("DeadAlarm Playing", "prepare() failed");
         }
 
+    }
+
+    public void playNotification() {
+        mPlayer = new MediaPlayer();
+
+        mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
+        try {
+            mPlayer.setDataSource(mContext,
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

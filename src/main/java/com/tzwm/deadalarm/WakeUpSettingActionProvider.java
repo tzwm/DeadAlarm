@@ -53,8 +53,28 @@ public class WakeUpSettingActionProvider extends ActionProvider implements View.
         mPopWindow.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
         mPopWindow.setOutsideTouchable(true);// 设置触摸外面时消失
         mPopWindow.setAnimationStyle(android.R.style.Animation_Dialog);// 设置动画效果
-        mPopWindow.showAsDropDown(view, -120, 20);// 显示位置在锚点view的左边底部
+        mPopWindow.showAsDropDown(view, -140, 20);// 显示位置在锚点view的左边底部
 
-
+        TextView textView = (TextView)menuView.findViewById(R.id.nomal_mode);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlarmReceiver.wakeupWay = AlarmReceiver.WAKEUP_NORMAL;
+            }
+        });
+        textView = (TextView)menuView.findViewById(R.id.sound_reproduce);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlarmReceiver.wakeupWay = AlarmReceiver.SOUND_REPRODUCE;
+            }
+        });
+        textView = (TextView)menuView.findViewById(R.id.punch_the_ball);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlarmReceiver.wakeupWay = AlarmReceiver.PUNCH_THE_BALL;
+            }
+        });
     }
 }
