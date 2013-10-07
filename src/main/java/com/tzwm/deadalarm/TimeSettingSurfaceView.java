@@ -164,7 +164,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
 
     private void init(Context context) {
         timeSettingActivity = (TimeSettingActivity) context;
-        mediaController = new MediaController();
+        mediaController = new MediaController(context);
 
         countDownholder = this.getHolder();
         countDownholder.addCallback(this);

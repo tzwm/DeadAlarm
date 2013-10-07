@@ -17,7 +17,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        MediaController mediaController = new MediaController();
+        MediaController mediaController = new MediaController(context);
         mediaController.startPlaying();
 
         Toast toast = Toast.makeText(context, "Time's Up!", Toast.LENGTH_LONG);

@@ -48,9 +48,6 @@ public class MyAlarm {
 //        arm.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+(10*1000), 24*60*60*1000, pi);
         arm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 24*60*60*1000, pi);
 
-        Toast toast = Toast.makeText(mContext, "New Alarm.", Toast.LENGTH_SHORT);
-        toast.show();
-
         isOpened = true;
     }
 
@@ -62,5 +59,12 @@ public class MyAlarm {
         arm.cancel(pi);
 
         isOpened = false;
+    }
+
+    public void changeState() {
+        if(isOpened)
+            close();
+        else
+            open();
     }
 }

@@ -1,21 +1,27 @@
 package com.tzwm.deadalarm;
 
+import android.content.Context;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.media.RingtoneManager;
 import android.os.Environment;
 import android.util.Log;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
  * Created by tzwm on 10/6/13.
  */
 public class MediaController {
+    private Context mContext;
     private MediaRecorder mRecorder;
     private MediaPlayer mPlayer;
     private String mFileName;
 
-    public MediaController() {
+    public MediaController(Context _mContext) {
+        mContext = _mContext;
+
         mRecorder = null;
         mPlayer =null;
 
@@ -64,7 +70,22 @@ public class MediaController {
         });
 
         try {
-            mPlayer.setDataSource(mFileName);
+            File f = new File(mFileName);
+            if(!f.exists()){
+                mPlayer.setDataSource(mContext,
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            }else
+                mPlayer.setDataSource(mFileName);
+        } catch (Exception e) {
+            try {
+                mPlayer.setDataSource(mContext,
+                        RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+        }
+
+        try {
             mPlayer.prepare();
             mPlayer.start();
         } catch (IOException e) {
