@@ -3,6 +3,7 @@
 
     <string name="app_name">DeadAlarm</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_count_down">DeadAlarm</string>
+    <string name="title_activity_alarmlist">DeadAlarm</string>
+    <string name="title_activity_timesetting">Time Setting</string>
 
 </resources>

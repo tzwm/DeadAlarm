@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
  * Created by tzwm on 10/6/13.
  */
 public class TimeTextView extends TextView {
-    private int hourOfDay, minute;
+    int hourOfDay, minute;
     private static final String STR_FORMAT = "00";
     DecimalFormat df;
 

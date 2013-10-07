@@ -1,33 +1,32 @@
 package com.tzwm.deadalarm;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Vector;
 
 public class AlarmListActivity extends Activity {
-    private Vector<MyAlarm> myAlarms;
+    static Vector<MyAlarm> myAlarms = new Vector<MyAlarm>();
+
     private ListView mListView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_alarmlist);
-//        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.mytitlebar);
 
-        myAlarms = new Vector<MyAlarm>();
         mListView = (ListView) findViewById(R.id.listView);
-
-        MyAlarm myAlarm = new MyAlarm(this, 21, 00);
-        myAlarms.add(myAlarm);
-        myAlarm.open();
     }
 
     @Override
@@ -40,7 +39,9 @@ public class AlarmListActivity extends Activity {
             MyAlarm tmp = (MyAlarm)i.next();
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("item", tmp);
-            map.put("ItemTime", String.valueOf(tmp.hourOfDay) + ":" + String.valueOf(tmp.minute));
+            DecimalFormat df;
+            df = new DecimalFormat("00");
+            map.put("ItemTime", df.format(tmp.hourOfDay) + ":" + df.format(tmp.minute));
             if(tmp.isOpened)
                 map.put("ItemTurn", "ON");
             else
@@ -55,5 +56,23 @@ public class AlarmListActivity extends Activity {
 
         mListView.setAdapter(mSchedule);
     }
-    
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.alarm_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_plus:
+                Intent intent = new Intent(this, TimeSettingActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
 }
