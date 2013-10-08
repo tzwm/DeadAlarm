@@ -1,11 +1,9 @@
 package com.tzwm.deadalarm;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -22,13 +20,14 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
     private Context mContext;
     private SurfaceHolder mHolder;
     private Thread mThread;
+    private MediaController mMediaController;
     static boolean isQuitted=true;
 
     private int xCanvas, yCanvas;
-    private int xCurrent, yCurrent;
+    private int xCurrent, yCurrent, xTo, yTo;
     private int step, deviation;
-    private int rCircle;
-    private int cColor;
+    private int rCircle, rLast;
+    private int cColor, ccColor;
     private Random random;
 
     static private int[] d = {-1, 0, 1};
@@ -76,17 +75,27 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
             mPaint.setAntiAlias(true);
             mPaint.setColor(cColor);
             mPaint.setStyle(Paint.Style.STROKE);
-            int xTmp = xCurrent + step*(random.nextInt(3) - 1);
-            while(xTmp<rCircle || xTmp>xCanvas-rCircle) {
-                xTmp = xCurrent + step*(random.nextInt(3) - 1);
+            mPaint.setStrokeWidth(3);
+
+            float xTmp, yTmp;
+            float tmp = (float)Math.sqrt((xCurrent-xTo)*(xCurrent-xTo) +
+                                            (yCurrent-yTo)*(yCurrent-yTo));
+            xTmp = xCurrent + step*(xTo-xCurrent)/tmp;
+            yTmp = yCurrent - step*(yCurrent-yTo)/tmp;
+            xCurrent = (int)xTmp;
+            yCurrent = (int)yTmp;
+            canvas.drawCircle(xCurrent, yCurrent, rCircle, mPaint);
+            mPaint.setColor(ccColor);
+            mPaint.setStrokeWidth(3);
+            if(rLast <= 0)
+                rLast = rCircle;
+            if(rLast-- % 2 == 0)
+//                canvas.drawCircle(xCurrent, yCurrent, rLast, mPaint);
+
+            if(Math.sqrt((xCurrent-xTo)*(xCurrent-xTo)
+                    + (yCurrent-yTo)*(yCurrent-yTo)) <= rCircle){
+                generateNext();
             }
-            int yTmp = xCurrent + step*(random.nextInt(3) - 1);
-            while(yTmp<rCircle || yTmp>xCanvas-rCircle) {
-                yTmp = xCurrent + step*(random.nextInt(3) - 1);
-            }
-            canvas.drawCircle(xTmp, yTmp, rCircle, mPaint);
-            xCurrent = xTmp;
-            yCurrent = yTmp;
 
             mHolder.unlockCanvasAndPost(canvas);
         }
@@ -103,9 +112,12 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
         while(xCurrent<rCircle || xCurrent>xCanvas-rCircle)
             xCurrent = random.nextInt(1<<30) % xCanvas;
         yCurrent = random.nextInt(1<<30) % yCanvas;
-        while(yCurrent<rCircle || yCurrent>xCanvas-rCircle)
+        while(yCurrent<rCircle || yCurrent>yCanvas-rCircle)
             yCurrent = random.nextInt(1<<30) % yCanvas;
-        cColor = Color.WHITE;
+
+        generateNext();
+
+        mMediaController.repeatNotification();
 
         mThread = new Thread(this);
         mThread.start();
@@ -123,22 +135,38 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
     private void quit() {
         isQuitted = true;
+        mMediaController.stop();
+
         ((BeeActivity)mContext).finish();
     }
 
-    private void init(Context _context) {
+    public void init(Context _context) {
         mContext = _context;
         mHolder = getHolder();
+        mMediaController = new MediaController(_context);
         mHolder.addCallback(this);
         setZOrderOnTop(true);
         setFocusableInTouchMode(true);
 
-        rCircle = 30;
+        rCircle = 35;
+        rLast = 35;
         random = new Random();
-        step = 10;
-        deviation = 10;
+        step = 11;
+        deviation = 30;
+
+        cColor = Color.WHITE;
+        ccColor = Color.GREEN;
 
         isQuitted = true;
+    }
+
+    private void generateNext() {
+        xTo = random.nextInt(1<<30) % xCanvas;
+        while(xTo<=rCircle || xTo>=xCanvas-rCircle)
+            xTo = random.nextInt(1<<30) % xCanvas;
+        yTo = random.nextInt(1<<30) % yCanvas;
+        while(yTo<=rCircle || yTo>=yCanvas-rCircle)
+            yTo = random.nextInt(1<<30) % yCanvas;
     }
 
 }

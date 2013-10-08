@@ -1,5 +1,6 @@
 package com.tzwm.deadalarm;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -81,6 +82,13 @@ public class WakeUpSettingActionProvider extends ActionProvider implements View.
                 AlarmReceiver.wakeupWay = AlarmReceiver.PUNCH_THE_BALL;
                 mPopWindow.dismiss();
                 Toast.makeText(mContext, "Punch The Ball", Toast.LENGTH_SHORT).show();
+            }
+        });
+        textView = (TextView)menuView.findViewById(R.id.discover_more);
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(mContext, "To be continue...", Toast.LENGTH_LONG).show();
             }
         });
     }

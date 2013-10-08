@@ -103,8 +103,29 @@ public class MediaController {
         });
         try {
             mPlayer.setDataSource(mContext,
-                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
             mPlayer.prepare();
+            mPlayer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void stop() {
+        if(mPlayer == null)
+            return;
+
+        mPlayer.stop();
+    }
+
+    public void repeatNotification() {
+        mPlayer = new MediaPlayer();
+
+        try {
+            mPlayer.setDataSource(mContext,
+                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+            mPlayer.prepare();
+            mPlayer.setLooping(true);
             mPlayer.start();
         } catch (IOException e) {
             e.printStackTrace();
