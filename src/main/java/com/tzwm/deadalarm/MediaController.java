@@ -105,6 +105,7 @@ public class MediaController {
             mPlayer.setDataSource(mContext,
                     RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
             mPlayer.prepare();
+            mPlayer.setLooping(false);
             mPlayer.start();
         } catch (IOException e) {
             e.printStackTrace();

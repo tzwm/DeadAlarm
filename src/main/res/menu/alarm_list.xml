@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/menu_setting"
-        android:icon="@drawable/spanner"
-        android:title="Setting"
-        android:showAsAction="ifRoom"
-        android:actionProviderClass="com.tzwm.deadalarm.WakeUpSettingActionProvider" />
-
+    
     <item
         android:id="@+id/menu_plus"
         android:icon="@drawable/plus"
