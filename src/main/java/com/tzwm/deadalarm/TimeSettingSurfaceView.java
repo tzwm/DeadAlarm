@@ -22,6 +22,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
     private SurfaceHolder countDownholder;
     private MediaController mediaController;
     private Thread drawThread;
+    static boolean isQuitted=true;
     private int xCanvas, yCanvas, rCenterCircle, rFringeCircle;
     private float xCurrent, yCurrent;
     private int ccColor, currentColor, arcColor, arcAngle, currentArcAngle, lastAngle;
@@ -45,6 +46,8 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        isQuitted = false;
+
         xCanvas = getWidth();
         yCanvas = getHeight();
         rCenterCircle = getWidth() / 5;
@@ -60,6 +63,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
+        isQuitted = true;
     }
 
     @Override
@@ -191,7 +195,7 @@ public class TimeSettingSurfaceView extends SurfaceView implements SurfaceHolder
 
     @Override
     public void run() {
-        while (true) {
+        while (!isQuitted) {
             if (ccColor != currentColor) {
                 Canvas canvas = countDownholder.lockCanvas(new Rect(xCanvas / 2 - rCenterCircle - 1,
                         yCanvas / 2 - rCenterCircle - 1,

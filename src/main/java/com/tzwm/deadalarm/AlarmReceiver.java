@@ -53,6 +53,7 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     private void punchTheBall() {
         Intent intent = new Intent(mContext, BeeActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 }

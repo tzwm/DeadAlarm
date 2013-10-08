@@ -22,6 +22,7 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
     private Context mContext;
     private SurfaceHolder mHolder;
     private Thread mThread;
+    static boolean isQuitted=true;
 
     private int xCanvas, yCanvas;
     private int xCurrent, yCurrent;
@@ -66,7 +67,7 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public void run() {
-        while(true){
+        while(!isQuitted){
             Canvas canvas = mHolder.lockCanvas(new Rect(xCurrent-4*rCircle, yCurrent-4*rCircle,
                                                         xCurrent+4*rCircle, yCurrent+4*rCircle));
             canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
@@ -93,6 +94,8 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
+        isQuitted = false;
+
         xCanvas = getWidth();
         yCanvas = getHeight();
 
@@ -115,10 +118,11 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        isQuitted = true;
     }
 
     private void quit() {
+        isQuitted = true;
         ((BeeActivity)mContext).finish();
     }
 
@@ -133,6 +137,8 @@ public class BeeSurfaceView extends SurfaceView implements SurfaceHolder.Callbac
         random = new Random();
         step = 10;
         deviation = 10;
+
+        isQuitted = true;
     }
 
 }
