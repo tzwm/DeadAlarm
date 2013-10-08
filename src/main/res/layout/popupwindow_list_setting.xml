@@ -11,11 +11,13 @@
         android:text="WakeUp Setting"
         android:id="@+id/textView"
         android:textColor="#FFFFFF"
-        android:textSize="27dp"/>
+        android:textSize="27dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"/>
 
     <View
         android:layout_width="fill_parent"
-        android:layout_height="1px"
+        android:layout_height="2px"
         android:background="#0099CC"
         />
 
@@ -24,20 +26,47 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Nomal Mode"
-        android:id="@+id/nomal_mode" />
+        android:id="@+id/nomal_mode"
+        android:textSize="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5px"
+        android:background="#D9D9D2"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Sound Reproduce"
-        android:id="@+id/sound_reproduce" />
+        android:id="@+id/sound_reproduce"
+        android:textSize="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5px"
+        android:background="#D9D9D2"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Punch The Ball"
-        android:id="@+id/punch_the_ball" />
+        android:id="@+id/punch_the_ball"
+        android:textSize="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="0.5px"
+        android:background="#D9D9D2"
+        />
 
 </LinearLayout>

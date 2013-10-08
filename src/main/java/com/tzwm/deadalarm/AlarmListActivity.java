@@ -44,28 +44,28 @@ public class AlarmListActivity extends Activity {
                 return true;
             }
         });
-        mListView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                float x=0, y=0, upx, upy;
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    x = event.getX();
-                    y = event.getY();
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    upx = event.getX();
-                    upy = event.getY();
-                    int position1 = ((ListView) v).pointToPosition((int) x, (int) y);
-                    int position2 = ((ListView) v).pointToPosition((int) upx,(int) upy);
-
-                    if (position1 == position2 && Math.abs(x - upx) > 10) {
-                        View view = ((ListView) v).getChildAt(position1);
-                        removeListItem(position1);
-                    }
-                }
-                return false;
-            }
-        });
+//        mListView.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                float x=0, y=0, upx, upy;
+//                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//                    x = event.getX();
+//                    y = event.getY();
+//                }
+//                if (event.getAction() == MotionEvent.ACTION_UP) {
+//                    upx = event.getX();
+//                    upy = event.getY();
+//                    int position1 = ((ListView) v).pointToPosition((int) x, (int) y);
+//                    int position2 = ((ListView) v).pointToPosition((int) upx,(int) upy);
+//
+//                    if (position1 == position2 && Math.abs(x - upx) > 10) {
+//                        View view = ((ListView) v).getChildAt(position1);
+//                        removeListItem(position1);
+//                    }
+//                }
+//                return false;
+//            }
+//        });
     }
 
     @Override

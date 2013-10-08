@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by tzwm on 10/8/13.
@@ -53,13 +54,15 @@ public class WakeUpSettingActionProvider extends ActionProvider implements View.
         mPopWindow.setBackgroundDrawable(new ColorDrawable(Color.BLACK));
         mPopWindow.setOutsideTouchable(true);// 设置触摸外面时消失
         mPopWindow.setAnimationStyle(android.R.style.Animation_Dialog);// 设置动画效果
-        mPopWindow.showAsDropDown(view, -140, 20);// 显示位置在锚点view的左边底部
+        mPopWindow.showAsDropDown(view, -200, 20);// 显示位置在锚点view的左边底部
 
         TextView textView = (TextView)menuView.findViewById(R.id.nomal_mode);
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 AlarmReceiver.wakeupWay = AlarmReceiver.WAKEUP_NORMAL;
+                mPopWindow.dismiss();
+                Toast.makeText(mContext, "Normal Mode", Toast.LENGTH_SHORT).show();
             }
         });
         textView = (TextView)menuView.findViewById(R.id.sound_reproduce);
@@ -67,6 +70,8 @@ public class WakeUpSettingActionProvider extends ActionProvider implements View.
             @Override
             public void onClick(View v) {
                 AlarmReceiver.wakeupWay = AlarmReceiver.SOUND_REPRODUCE;
+                mPopWindow.dismiss();
+                Toast.makeText(mContext, "Sound Reproduce", Toast.LENGTH_SHORT).show();
             }
         });
         textView = (TextView)menuView.findViewById(R.id.punch_the_ball);
@@ -74,6 +79,8 @@ public class WakeUpSettingActionProvider extends ActionProvider implements View.
             @Override
             public void onClick(View v) {
                 AlarmReceiver.wakeupWay = AlarmReceiver.PUNCH_THE_BALL;
+                mPopWindow.dismiss();
+                Toast.makeText(mContext, "Punch The Ball", Toast.LENGTH_SHORT).show();
             }
         });
     }
